@@ -6,85 +6,49 @@
 <title>博客管理</title>
 <style>
   :root {
-    --bg: #fafafa;
-    --card: #fff;
-    --text: #1a1a1a;
-    --muted: #888;
-    --border: #eee;
-    --accent: #0071e3;
-    --danger: #ff3b30;
+    --bg: #fafafa; --card: #fff; --text: #1a1a1a; --muted: #888;
+    --border: #eee; --accent: #0071e3; --danger: #ff3b30;
     --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
+    background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
   }
 
-  /* 登录页 */
+  /* 登录 */
   .login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 24px;
+    display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;
   }
-
   .login-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 48px 40px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+    background: var(--card); border-radius: 20px; padding: 48px 40px;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    width: 100%; max-width: 400px; text-align: center;
   }
-
   .login-card h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
   .login-card p { color: var(--muted); margin-bottom: 28px; font-size: 14px; }
 
-  .login-card input {
+  .field-group { text-align: left; margin-bottom: 16px; }
+  .field-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+  .field-group input {
     width: 100%; padding: 12px 16px; border: 1px solid var(--border);
     border-radius: 10px; font-size: 16px; font-family: inherit;
-    outline: none; margin-bottom: 16px; transition: border-color 0.2s;
+    outline: none; transition: border-color 0.2s;
   }
-  .login-card input:focus { border-color: var(--accent); }
+  .field-group input:focus { border-color: var(--accent); }
 
-  .login-card button {
+  .login-card > button {
     width: 100%; padding: 12px; background: var(--accent); color: #fff;
     border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
-    cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+    cursor: pointer; font-family: inherit; transition: opacity 0.2s; margin-top: 8px;
   }
-  .login-card button:hover { opacity: 0.9; }
-  .login-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .login-card > button:hover { opacity: 0.9; }
+  .login-card > button:disabled { opacity: 0.5; cursor: not-allowed; }
   .login-card .error { color: var(--danger); font-size: 13px; margin-top: 8px; min-height: 20px; }
+  .login-card .hint { font-size: 11px; color: var(--muted); margin-top: 12px; }
+  .login-card .hint a { color: var(--accent); }
 
-  /* 设置页面 */
-  .setup-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 48px 40px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    width: 100%;
-    max-width: 500px;
-  }
-  .setup-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-  .setup-card p { color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.7; }
-  .setup-card label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; margin-top: 16px; }
-  .setup-card input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; font-family: inherit; outline: none; }
-  .setup-card input:focus { border-color: var(--accent); }
-  .setup-card button { margin-top: 24px; }
-  .setup-card .small { font-size: 11px; color: var(--muted); margin-top: 6px; }
-  .setup-card a { color: var(--accent); }
-
-  /* 管理主界面 */
+  /* 管理界面 */
   .admin-screen { display: none; }
   .admin-screen.active { display: block; }
 
@@ -93,62 +57,40 @@
     background: rgba(250,250,250,0.8);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 0;
+    border-bottom: 1px solid var(--border); padding: 16px 0;
   }
-
   .header-inner {
     max-width: 900px; margin: 0 auto; padding: 0 24px;
     display: flex; align-items: center; justify-content: space-between;
   }
-
   .logo { font-size: 20px; font-weight: 700; }
   .header-actions { display: flex; gap: 12px; align-items: center; }
-
   .btn {
     padding: 8px 18px; border-radius: 8px; font-size: 14px;
     font-weight: 500; cursor: pointer; border: none; font-family: inherit;
     transition: all 0.2s;
   }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-
   .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
   .btn-outline:hover:not(:disabled) { background: #f5f5f5; }
-
   .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
   .btn-danger:hover:not(:disabled) { background: #fff0ef; }
-
   .btn-sm { padding: 4px 12px; font-size: 12px; }
-
   main { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
-
   .section-title {
     font-size: 13px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 1px; color: var(--muted); margin-bottom: 16px;
   }
-
   .post-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 16px 20px; background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow); gap: 16px;
   }
-
-  .post-row .title {
-    font-weight: 600; font-size: 15px; flex: 1; min-width: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
+  .post-row .title { font-weight: 600; font-size: 15px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .post-row .meta { font-size: 12px; color: var(--muted); white-space: nowrap; }
   .post-row .actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-  .unsaved-badge {
-    background: #ff9500; color: #fff; font-size: 11px; padding: 2px 8px;
-    border-radius: 8px; margin-left: 8px; font-weight: 500;
-  }
-
   .status-bar {
     display: flex; align-items: center; gap: 12px;
     padding: 10px 24px; background: #fffbe6; border-bottom: 1px solid #ffe58f;
@@ -156,14 +98,13 @@
   }
   .status-bar button { margin-left: 8px; }
 
-  /* 编辑器弹窗 */
+  /* 编辑器 */
   .overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
     z-index: 200; align-items: center; justify-content: center; padding: 24px;
   }
   .overlay.active { display: flex; }
-
   .editor {
     background: var(--card); border-radius: 20px; padding: 36px;
     width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;
@@ -180,17 +121,13 @@
   .editor textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
   .editor .hint { font-size: 12px; color: var(--muted); margin-top: -16px; margin-bottom: 20px; }
   .editor .btns { display: flex; gap: 10px; justify-content: flex-end; }
-
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-
   .toast {
     position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
     background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 10px;
-    font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s;
-    pointer-events: none;
+    font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
   }
   .toast.show { opacity: 1; }
-
   .toast.error { background: var(--danger); }
 </style>
 </head>
@@ -200,37 +137,26 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <h1>🔐 博客管理</h1>
-    <p>请输入管理密码</p>
-    <input type="password" id="passwordInput" placeholder="管理密码" onkeydown="if(event.key==='Enter')login()">
+    <p>在任何设备上登录，密码由 GitHub 验证</p>
+    <div class="field-group">
+      <label>GitHub Token</label>
+      <input type="password" id="ghTokenInput" placeholder="ghp_xxx...">
+    </div>
+    <div class="field-group">
+      <label>管理密码</label>
+      <input type="password" id="passwordInput" placeholder="输入管理密码" onkeydown="if(event.key==='Enter')login()">
+    </div>
     <button onclick="login()" id="loginBtn">登 录</button>
     <p class="error" id="loginError"></p>
-  </div>
-</div>
-
-<!-- 首次设置界面（GitHub Token 未配置时显示） -->
-<div class="login-screen" id="setupScreen" style="display:none">
-  <div class="setup-card">
-    <h1>⚙️ 首次设置</h1>
-    <p>要使用一键发布功能，需要配置 GitHub Personal Access Token。</p>
-    <p>1. 打开 <a href="https://github.com/settings/tokens/new?scopes=repo&description=blog-admin" target="_blank">这个链接</a> 创建 Token</p>
-    <p>2. 选择 <strong>repo</strong> 权限，点 Generate token</p>
-    <p>3. 复制生成的 Token 粘贴到下面</p>
-    <label>GitHub Token</label>
-    <input type="password" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxx">
-    <div class="small">Token 只保存在你的浏览器本地，不会上传到任何服务器</div>
-    <label>仓库路径</label>
-    <input type="text" id="ghRepoInput" value="johnwiiick/blog" placeholder="用户名/仓库名">
-    <label>管理密码（修改默认密码）</label>
-    <input type="password" id="adminPwInput" placeholder="设置管理密码">
-    <button class="btn btn-primary" onclick="saveSetup()" style="width:100%">保 存 并 开 始</button>
+    <p class="hint">第一次用？去 <a href="https://github.com/settings/tokens/new?scopes=repo&description=blog-admin" target="_blank">创建 Token</a>（勾选 repo）</p>
   </div>
 </div>
 
 <!-- 管理界面 -->
 <div class="admin-screen" id="adminScreen">
   <div class="status-bar" id="statusBar" style="display:none">
-    <span>⚠️ 有未同步的更改</span>
-    <button class="btn btn-sm btn-primary" onclick="pushToGithub()">一键发布到网站</button>
+    <span>⚠️ 有未发布的更改</span>
+    <button class="btn btn-sm btn-primary" onclick="pushToGithub()">一键发布</button>
   </div>
   <header>
     <div class="header-inner">
@@ -244,7 +170,6 @@
       </div>
     </div>
   </header>
-
   <main>
     <div class="section-title">文章列表</div>
     <div id="postList"></div>
@@ -257,10 +182,10 @@
     <h2 id="editorTitle">写新文章</h2>
     <label>标题</label>
     <input type="text" id="postTitle" placeholder="文章标题">
-    <label>标签（用逗号分隔）</label>
-    <input type="text" id="postTags" placeholder="技术, 生活, 随笔">
+    <label>标签（逗号分隔）</label>
+    <input type="text" id="postTags" placeholder="技术, 生活">
     <label>内容（支持 HTML）</label>
-    <div class="hint">可直接写文字，每段用 &lt;p&gt;段落&lt;/p&gt; 包裹。支持 &lt;h2&gt;标题&lt;/h2&gt;、&lt;code&gt;代码&lt;/code&gt; 等。</div>
+    <div class="hint">段落用 &lt;p&gt;段落&lt;/p&gt; 包裹，支持 &lt;h2&gt;、&lt;code&gt; 等标签</div>
     <textarea id="postContent" placeholder="开始写作..."></textarea>
     <div class="btns">
       <button class="btn btn-outline" onclick="closeEditor()">取消</button>
@@ -273,101 +198,23 @@
 
 <script src="../posts.js"></script>
 <script>
-  // ============ 配置 ============
-  let GH_TOKEN = localStorage.getItem('blog_gh_token') || '';
-  let GH_REPO = localStorage.getItem('blog_gh_repo') || 'johnwiiick/blog';
-  let ADMIN_PASSWORD = localStorage.getItem('blog_admin_pw') || 'admin123';
-
-  // ============ 状态 ============
+  // ====== 全局状态 ======
+  let GH_TOKEN = '';
+  let GH_REPO = 'johnwiiick/blog';
   let editingId = null;
-  let dirty = false;       // 是否有未推送的更改
-  let _posts = [...(posts || [])];  // 工作副本
-  let _postsSha = null;    // GitHub 上的文件 SHA
+  let dirty = false;
+  let _posts = [...(posts || [])];
+  let _postsSha = null;
 
-  // ============ 页面初始化 ============
-  function init() {
-    const setupDone = localStorage.getItem('blog_setup_done');
-    if (GH_TOKEN && ADMIN_PASSWORD && setupDone) {
-      // 已配置
-      document.getElementById('setupScreen').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-    } else if (GH_TOKEN && ADMIN_PASSWORD && !setupDone) {
-      // Token 和密码都有了但 setupDone 标记丢失（可能是清理了部分 localStorage），重新标记
-      localStorage.setItem('blog_setup_done', '1');
-      document.getElementById('setupScreen').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-    } else {
-      // 首次使用，显示设置页
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('setupScreen').style.display = 'flex';
-      document.getElementById('adminPwInput').value = ADMIN_PASSWORD === 'admin123' ? '' : ADMIN_PASSWORD;
-      document.getElementById('ghTokenInput').value = GH_TOKEN;
-      document.getElementById('ghRepoInput').value = GH_REPO;
-    }
-
-    // 检查是否已登录
-    if (sessionStorage.getItem('blog_admin')) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('setupScreen').style.display = 'none';
-      document.getElementById('adminScreen').classList.add('active');
-      fetchLatestPosts().then(() => renderPostList());
-    }
+  // ====== SHA-256 哈希（纯 JS 实现） ======
+  async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // ============ 设置 ============
-  function saveSetup() {
-    const token = document.getElementById('ghTokenInput').value.trim();
-    const repo = document.getElementById('ghRepoInput').value.trim();
-    const pw = document.getElementById('adminPwInput').value.trim();
-
-    if (!token) { showToast('请输入 GitHub Token', true); return; }
-    if (!repo) { showToast('请输入仓库路径', true); return; }
-
-    GH_TOKEN = token;
-    GH_REPO = repo;
-    ADMIN_PASSWORD = pw || 'admin123';
-
-    localStorage.setItem('blog_gh_token', GH_TOKEN);
-    localStorage.setItem('blog_gh_repo', GH_REPO);
-    localStorage.setItem('blog_admin_pw', ADMIN_PASSWORD);
-    localStorage.setItem('blog_setup_done', '1');
-
-    document.getElementById('setupScreen').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'flex';
-    showToast('设置已保存，请登录');
-  }
-
-  // ============ 登录 ============
-  function login() {
-    const pw = document.getElementById('passwordInput').value;
-    const btn = document.getElementById('loginBtn');
-
-    if (pw === ADMIN_PASSWORD) {
-      btn.disabled = true;
-      btn.textContent = '加载中...';
-
-      sessionStorage.setItem('blog_admin', '1');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminScreen').classList.add('active');
-
-      fetchLatestPosts().then(() => renderPostList()).finally(() => {
-        btn.disabled = false;
-        btn.textContent = '登 录';
-      });
-    } else {
-      document.getElementById('loginError').textContent = '密码错误';
-    }
-  }
-
-  function logout() {
-    sessionStorage.removeItem('blog_admin');
-    if (dirty) {
-      if (!confirm('有未发布的更改，确定退出吗？')) return;
-    }
-    location.reload();
-  }
-
-  // ============ GitHub API ============
+  // ====== GitHub API ======
   async function githubApi(path, options = {}) {
     const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
       ...options,
@@ -384,13 +231,79 @@
     return res.json();
   }
 
+  // ====== 登录（密码从 GitHub 仓库下的 pw.txt 读取） ======
+  async function login() {
+    const token = document.getElementById('ghTokenInput').value.trim();
+    const pw = document.getElementById('passwordInput').value.trim();
+    const btn = document.getElementById('loginBtn');
+    const errEl = document.getElementById('loginError');
+
+    if (!token) { errEl.textContent = '请输入 GitHub Token'; return; }
+    if (!pw) { errEl.textContent = '请输入密码'; return; }
+
+    GH_TOKEN = ***
+    btn.disabled = true;
+    btn.textContent = '验证中...';
+    errEl.textContent = '';
+
+    try {
+      // 1. 尝试从 GitHub 仓库读取 pw.txt（密文密码哈希）
+      let file;
+      try {
+        file = await githubApi('pw.txt');
+      } catch (e) {
+        // pw.txt 不存在 —— 首次使用，把输入的密码哈希写入
+        errEl.textContent = '首次使用，正在设置密码...';
+        const pwHash = await sha256(pw);
+        const content = btoa(unescape(encodeURIComponent(pwHash)));
+        await githubApi('pw.txt', {
+          method: 'PUT',
+          body: JSON.stringify({ message: 'Init admin password', content, branch: 'main' })
+        });
+        errEl.textContent = '';
+      }
+
+      // 2. 如果 pw.txt 已存在，比对密码
+      if (file) {
+        const expectedHash = atob(file.content).trim();
+        const inputHash = await sha256(pw);
+        if (inputHash !== expectedHash) {
+          errEl.textContent = '密码错误';
+          btn.disabled = false;
+          btn.textContent = '登 录';
+          return;
+        }
+      }
+
+      // 3. 登录成功 - 存 token 到 sessionStorage（本次会话有效）
+      sessionStorage.setItem('blog_token', GH_TOKEN);
+      sessionStorage.setItem('blog_admin', '1');
+
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').classList.add('active');
+      await fetchLatestPosts();
+      renderPostList();
+
+    } catch (e) {
+      errEl.textContent = '登录失败: ' + e.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '登 录';
+    }
+  }
+
+  function logout() {
+    if (dirty && !confirm('有未发布的更改，确定退出吗？')) return;
+    sessionStorage.clear();
+    location.reload();
+  }
+
+  // ====== 加载文章 ======
   async function fetchLatestPosts() {
-    if (!GH_TOKEN) return;
     try {
       const file = await githubApi('posts.js');
       _postsSha = file.sha;
       const content = atob(file.content);
-      // 提取 posts 数组
       const match = content.match(/var\s+posts\s*=\s*(\[[\s\S]*\])\s*;/);
       if (match) {
         _posts = JSON.parse(match[1]);
@@ -401,52 +314,30 @@
       updateDirtyUI();
       document.getElementById('syncStatus').textContent = '✅ 已同步';
     } catch (e) {
-      console.log('Fetch posts from GitHub failed, using local copy:', e.message);
+      console.log('Fetch posts from GitHub failed:', e.message);
       _posts = [...(posts || [])];
-      document.getElementById('syncStatus').textContent = '📋 本地模式';
+      document.getElementById('syncStatus').textContent = '📋 初始数据';
     }
   }
 
+  // ====== 一键发布 ======
   async function pushToGithub() {
-    if (!GH_TOKEN) {
-      showToast('请先配置 GitHub Token', true);
-      return;
-    }
-
+    if (!GH_TOKEN) { showToast('Token 丢失，请重新登录', true); return; }
     const btn = document.getElementById('pushBtn');
     btn.disabled = true;
     btn.textContent = '发布中...';
-
     try {
-      // 先刷新 SHA
-      try {
-        const file = await githubApi('posts.js');
-        _postsSha = file.sha;
-      } catch (e) {
-        // 文件可能不存在
-        _postsSha = null;
-      }
-
+      try { const file = await githubApi('posts.js'); _postsSha = file.sha; } catch (e) { _postsSha = null; }
       const content = 'var posts = ' + JSON.stringify(_posts, null, 2) + ';';
       const base64 = btoa(unescape(encodeURIComponent(content)));
-
-      const body = {
-        message: 'Update posts',
-        content: base64,
-        branch: 'main'
-      };
+      const body = { message: 'Update posts', content: base64, branch: 'main' };
       if (_postsSha) body.sha = _postsSha;
-
-      const result = await githubApi('posts.js', {
-        method: 'PUT',
-        body: JSON.stringify(body)
-      });
-
+      const result = await githubApi('posts.js', { method: 'PUT', body: JSON.stringify(body) });
       _postsSha = result.content.sha;
       dirty = false;
       updateDirtyUI();
       document.getElementById('syncStatus').textContent = '✅ 已同步';
-      showToast('🎉 已发布到网站！稍等几十秒即可在博客首页看到更新');
+      showToast('🎉 已发布！稍后即可在博客首页看到');
     } catch (e) {
       showToast('发布失败: ' + e.message, true);
     } finally {
@@ -455,7 +346,7 @@
     }
   }
 
-  // ============ 文章管理 ============
+  // ====== 文章管理 ======
   function generateId(title) {
     const slug = title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '') || 'post';
     return slug + '-' + Date.now().toString(36);
@@ -464,7 +355,6 @@
   function openEditor(id) {
     editingId = id || null;
     document.getElementById('editorOverlay').classList.add('active');
-
     if (id) {
       const p = _posts.find(p => p.id === id);
       if (p) {
@@ -492,37 +382,16 @@
     const title = document.getElementById('postTitle').value.trim();
     const tagsRaw = document.getElementById('postTags').value.trim();
     const content = document.getElementById('postContent').value.trim();
-
-    if (!title || !content) {
-      showToast('标题和内容不能为空', true);
-      return;
-    }
-
+    if (!title || !content) { showToast('标题和内容不能为空', true); return; }
     const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-
     if (editingId) {
       const p = _posts.find(p => p.id === editingId);
-      if (p) {
-        p.title = title;
-        p.tags = tags;
-        p.content = content;
-        p.updatedAt = Date.now();
-      }
+      if (p) { p.title = title; p.tags = tags; p.content = content; p.updatedAt = Date.now(); }
     } else {
-      _posts.unshift({
-        id: generateId(title),
-        title,
-        content,
-        tags,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      });
+      _posts.unshift({ id: generateId(title), title, content, tags, createdAt: Date.now(), updatedAt: Date.now() });
     }
-
-    // 同步到全局 posts（前端预览用）
     posts.length = 0;
     _posts.forEach(p => posts.push(p));
-
     dirty = true;
     updateDirtyUI();
     closeEditor();
@@ -531,7 +400,7 @@
   }
 
   function deletePost(id) {
-    if (!confirm('确定要删除这篇文章吗？此操作不可撤销。')) return;
+    if (!confirm('确定删除？')) return;
     _posts = _posts.filter(p => p.id !== id);
     posts.length = 0;
     _posts.forEach(p => posts.push(p));
@@ -544,50 +413,53 @@
   function renderPostList() {
     const el = document.getElementById('postList');
     if (!_posts || _posts.length === 0) {
-      el.innerHTML = '<div class="empty-state">还没有文章，点击上方"+ 写文章"开始创作</div>';
+      el.innerHTML = '<div class="empty-state">还没有文章，点击"+ 写文章"开始创作</div>';
       return;
     }
-
-    el.innerHTML = _posts
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map(p => {
-        const d = new Date(p.createdAt);
-        const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        return `
-          <div class="post-row">
-            <span class="title">${p.title}</span>
-            <span class="meta">${dateStr}</span>
-            <div class="actions">
-              <button class="btn btn-outline btn-sm" onclick="openEditor('${p.id}')">编辑</button>
-              <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">删除</button>
-            </div>
-          </div>
-        `;
-      }).join('');
+    el.innerHTML = _posts.sort((a, b) => b.createdAt - a.createdAt).map(p => {
+      const d = new Date(p.createdAt);
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      return `<div class="post-row">
+        <span class="title">${p.title}</span>
+        <span class="meta">${ds}</span>
+        <div class="actions">
+          <button class="btn btn-outline btn-sm" onclick="openEditor('${p.id}')">编辑</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">删除</button>
+        </div>
+      </div>`;
+    }).join('');
   }
 
   function updateDirtyUI() {
-    const bar = document.getElementById('statusBar');
-    if (dirty) {
-      bar.style.display = 'flex';
-    } else {
-      bar.style.display = 'none';
-    }
+    document.getElementById('statusBar').style.display = dirty ? 'flex' : 'none';
   }
 
   function showToast(msg, isError) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.className = 'toast show' + (isError ? ' error' : '');
-    setTimeout(() => toast.className = 'toast', 2500);
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isError ? ' error' : '');
+    setTimeout(() => t.className = 'toast', 2500);
   }
 
-  // ============ 事件绑定 ============
+  // ====== 初始化 ======
   document.getElementById('editorOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeEditor();
   });
 
-  init();
+  // 已登录恢复
+  (async function() {
+    if (sessionStorage.getItem('blog_admin')) {
+      GH_TOKEN = sessionStorage.getItem('blog_token') || ***
+      if (GH_TOKEN) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminScreen').classList.add('active');
+        await fetchLatestPosts();
+        renderPostList();
+      } else {
+        sessionStorage.clear();
+      }
+    }
+  })();
 </script>
 </body>
 </html>
