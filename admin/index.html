@@ -148,11 +148,11 @@ function getToken() {
   // 优先用输入框的（刚填的），其次用 localStorage 存的
   const input = document.getElementById('ghTokenInput').value.trim();
   if (input) return input;
-  return loca…tem('blog_token') || '';
+  return localStorage.getItem('blog_token') || '';
 }
 
 function saveToken(t) {
-  if (t) loca…tem('blog_token', t);
+  if (t) localStorage.setItem('blog_token', t);
 }
 
 function ghApi(path, opts = {}) {
