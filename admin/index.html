@@ -5,154 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>博客管理</title>
 <style>
-  :root {
-    --bg: #fafafa; --card: #fff; --text: #1a1a1a; --muted: #888;
-    --border: #eee; --accent: #0071e3; --danger: #ff3b30;
-    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
-  }
+  :root { --bg:#fafafa; --card:#fff; --text:#1a1a1a; --muted:#888; --border:#eee; --accent:#0071e3; --danger:#ff3b30; --shadow:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.06); }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;}
+  .login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+  .login-card{background:var(--card);border-radius:20px;padding:48px 40px;box-shadow:var(--shadow);border:1px solid var(--border);width:100%;max-width:400px;text-align:center;}
+  .login-card h1{font-size:28px;font-weight:700;margin-bottom:6px;}
+  .login-card p{color:var(--muted);margin-bottom:28px;font-size:14px;}
+  .login-card .fg{text-align:left;margin-bottom:16px;}
+  .login-card .fg label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+  .login-card .fg input{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;}
+  .login-card .fg input:focus{border-color:var(--accent);}
+  .login-card button{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s;}
+  .login-card button:hover{opacity:.9;}
+  .login-card button:disabled{opacity:.5;cursor:not-allowed;}
+  .login-card .error{color:var(--danger);font-size:13px;margin-top:8px;min-height:20px;}
+  .login-card .hint{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6;}
+  .login-card .hint a{color:var(--accent);}
+  .login-card .opt{display:flex;align-items:center;gap:8px;margin-bottom:16px;justify-content:center;}
+  .login-card .opt label{font-size:13px;color:var(--muted);cursor:pointer;}
 
-  /* 登录 */
-  .login-screen {
-    display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;
-  }
-  .login-card {
-    background: var(--card); border-radius: 20px; padding: 48px 40px;
-    box-shadow: var(--shadow); border: 1px solid var(--border);
-    width: 100%; max-width: 400px; text-align: center;
-  }
-  .login-card h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-  .login-card p { color: var(--muted); margin-bottom: 28px; font-size: 14px; }
-
-  .field-group { text-align: left; margin-bottom: 16px; }
-  .field-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
-  .field-group input {
-    width: 100%; padding: 12px 16px; border: 1px solid var(--border);
-    border-radius: 10px; font-size: 16px; font-family: inherit;
-    outline: none; transition: border-color 0.2s;
-  }
-  .field-group input:focus { border-color: var(--accent); }
-
-  .login-card > button {
-    width: 100%; padding: 12px; background: var(--accent); color: #fff;
-    border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
-    cursor: pointer; font-family: inherit; transition: opacity 0.2s; margin-top: 8px;
-  }
-  .login-card > button:hover { opacity: 0.9; }
-  .login-card > button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .login-card .error { color: var(--danger); font-size: 13px; margin-top: 8px; min-height: 20px; }
-  .login-card .hint { font-size: 11px; color: var(--muted); margin-top: 12px; }
-  .login-card .hint a { color: var(--accent); }
-
-  /* 管理界面 */
-  .admin-screen { display: none; }
-  .admin-screen.active { display: block; }
-
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(250,250,250,0.8);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--border); padding: 16px 0;
-  }
-  .header-inner {
-    max-width: 900px; margin: 0 auto; padding: 0 24px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .logo { font-size: 20px; font-weight: 700; }
-  .header-actions { display: flex; gap: 12px; align-items: center; }
-  .btn {
-    padding: 8px 18px; border-radius: 8px; font-size: 14px;
-    font-weight: 500; cursor: pointer; border: none; font-family: inherit;
-    transition: all 0.2s;
-  }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-  .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
-  .btn-outline:hover:not(:disabled) { background: #f5f5f5; }
-  .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
-  .btn-danger:hover:not(:disabled) { background: #fff0ef; }
-  .btn-sm { padding: 4px 12px; font-size: 12px; }
-  main { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
-  .section-title {
-    font-size: 13px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 1px; color: var(--muted); margin-bottom: 16px;
-  }
-  .post-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 20px; background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow); gap: 16px;
-  }
-  .post-row .title { font-weight: 600; font-size: 15px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .post-row .meta { font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .post-row .actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .status-bar {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 24px; background: #fffbe6; border-bottom: 1px solid #ffe58f;
-    font-size: 13px; color: #8c6d00; justify-content: center;
-  }
-  .status-bar button { margin-left: 8px; }
-
-  /* 编辑器 */
-  .overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
-    z-index: 200; align-items: center; justify-content: center; padding: 24px;
-  }
-  .overlay.active { display: flex; }
-  .editor {
-    background: var(--card); border-radius: 20px; padding: 36px;
-    width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  }
-  .editor h2 { font-size: 22px; margin-bottom: 24px; }
-  .editor label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .editor input, .editor textarea {
-    width: 100%; padding: 10px 14px; border: 1px solid var(--border);
-    border-radius: 8px; font-size: 15px; font-family: inherit; outline: none;
-    margin-bottom: 20px; transition: border-color 0.2s;
-  }
-  .editor input:focus, .editor textarea:focus { border-color: var(--accent); }
-  .editor textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
-  .editor .hint { font-size: 12px; color: var(--muted); margin-top: -16px; margin-bottom: 20px; }
-  .editor .btns { display: flex; gap: 10px; justify-content: flex-end; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .toast {
-    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
-    background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 10px;
-    font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-  .toast.error { background: var(--danger); }
+  .admin-screen{display:none;}
+  .admin-screen.active{display:block;}
+  header{position:sticky;top:0;z-index:100;background:rgba(250,250,250,.8);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border);padding:16px 0;}
+  .header-inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-size:20px;font-weight:700;}
+  .header-actions{display:flex;gap:12px;align-items:center;}
+  .btn{padding:8px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:.9;}
+  .btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
+  .btn-outline:hover:not(:disabled){background:#f5f5f5;}
+  .btn-danger{background:none;border:1px solid var(--danger);color:var(--danger);}
+  .btn-danger:hover:not(:disabled){background:#fff0ef;}
+  .btn-sm{padding:4px 12px;font-size:12px;}
+  main{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+  .section-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px;}
+  .post-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);gap:16px;}
+  .post-row .title{font-weight:600;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .post-row .meta{font-size:12px;color:var(--muted);white-space:nowrap;}
+  .post-row .actions{display:flex;gap:6px;flex-shrink:0;}
+  .status-bar{display:flex;align-items:center;gap:12px;padding:10px 24px;background:#fffbe6;border-bottom:1px solid #ffe58f;font-size:13px;color:#8c6d00;justify-content:center;}
+  .status-bar button{margin-left:8px;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:24px;}
+  .overlay.active{display:flex;}
+  .editor{background:var(--card);border-radius:20px;padding:36px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+  .editor h2{font-size:22px;margin-bottom:24px;}
+  .editor label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+  .editor input,.editor textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;outline:none;margin-bottom:20px;transition:border-color .2s;}
+  .editor input:focus,.editor textarea:focus{border-color:var(--accent);}
+  .editor textarea{min-height:200px;resize:vertical;line-height:1.6;}
+  .editor .hint{font-size:12px;color:var(--muted);margin-top:-16px;margin-bottom:20px;}
+  .editor .btns{display:flex;gap:10px;justify-content:flex-end;}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+  .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.show{opacity:1;}
+  .toast.error{background:var(--danger);}
 </style>
 </head>
 <body>
 
-<!-- 登录界面 -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <h1>🔐 博客管理</h1>
-    <p>在任何设备上登录，密码由 GitHub 验证</p>
-    <div class="field-group">
-      <label>GitHub Token</label>
+    <p>任何设备都能登录</p>
+    <div class="fg">
+      <label>管理密码</label>
+      <input type="password" id="passwordInput" placeholder="输入密码">
+    </div>
+    <div class="opt">
+      <input type="checkbox" id="showToken" onchange="document.getElementById('ghTokenInput').style.display=this.checked?'block':'none'">
+      <label for="showToken">更换 GitHub Token</label>
+    </div>
+    <div class="fg" id="tokenGroup" style="display:none">
+      <label>GitHub Token（首次或更换时填写）</label>
       <input type="password" id="ghTokenInput" placeholder="ghp_xxx...">
     </div>
-    <div class="field-group">
-      <label>管理密码</label>
-      <input type="password" id="passwordInput" placeholder="输入管理密码" onkeydown="if(event.key==='Enter')login()">
-    </div>
-    <button onclick="login()" id="loginBtn">登 录</button>
+    <button onclick="doLogin()" id="loginBtn">登 录</button>
     <p class="error" id="loginError"></p>
-    <p class="hint">第一次用？去 <a href="https://github.com/settings/tokens/new?scopes=repo&description=blog-admin" target="_blank">创建 Token</a>（勾选 repo）</p>
+    <p class="hint">首次使用需填写 Token。<br>去 <a href="https://github.com/settings/tokens/new?scopes=repo&description=blog" target="_blank">创建 Token</a>（勾选 repo），粘贴到上方输入框。</p>
   </div>
 </div>
 
-<!-- 管理界面 -->
 <div class="admin-screen" id="adminScreen">
   <div class="status-bar" id="statusBar" style="display:none">
     <span>⚠️ 有未发布的更改</span>
@@ -166,7 +101,7 @@
         <a href="../" class="btn btn-outline">查看博客</a>
         <button class="btn btn-outline" onclick="pushToGithub()" id="pushBtn">发布到网站</button>
         <button class="btn btn-primary" onclick="openEditor()">+ 写文章</button>
-        <button class="btn btn-outline" id="logoutBtn" onclick="logout()">退出</button>
+        <button class="btn btn-outline" onclick="logout()">退出</button>
       </div>
     </div>
   </header>
@@ -176,7 +111,6 @@
   </main>
 </div>
 
-<!-- 编辑器弹窗 -->
 <div class="overlay" id="editorOverlay">
   <div class="editor">
     <h2 id="editorTitle">写新文章</h2>
@@ -185,7 +119,7 @@
     <label>标签（逗号分隔）</label>
     <input type="text" id="postTags" placeholder="技术, 生活">
     <label>内容（支持 HTML）</label>
-    <div class="hint">段落用 &lt;p&gt;段落&lt;/p&gt; 包裹，支持 &lt;h2&gt;、&lt;code&gt; 等标签</div>
+    <div class="hint">段落用 &lt;p&gt;段落&lt;/p&gt; 包裹，支持 &lt;h2&gt;标题&lt;/h2&gt;、&lt;code&gt;代码&lt;/code&gt;</div>
     <textarea id="postContent" placeholder="开始写作..."></textarea>
     <div class="btns">
       <button class="btn btn-outline" onclick="closeEditor()">取消</button>
@@ -198,268 +132,212 @@
 
 <script src="../posts.js"></script>
 <script>
-  // ====== 全局状态 ======
-  let GH_TOKEN = '';
-  let GH_REPO = 'johnwiiick/blog';
-  let editingId = null;
-  let dirty = false;
-  let _posts = [...(posts || [])];
-  let _postsSha = null;
+// ====== Token & 密码存储逻辑 ======
+// Token 存 localStorage（跨会话保留），密码验证通过 GitHub 上的 pw.txt（跨设备）
+// 首次使用：填 Token + 密码 → 创建 pw.txt + 存 Token 到本地
+// 再次使用同一设备：只需密码（Token 已存本地）
+// 换设备使用：勾选「更换 GitHub Token」填 Token + 密码
 
-  // ====== SHA-256 哈希（纯 JS 实现） ======
-  async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
+async function sha256(m) {
+  const b = new TextEncoder().encode(m);
+  const h = await crypto.subtle.digest('SHA-256', b);
+  return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2,'0')).join('');
+}
 
-  // ====== GitHub API ======
-  async function githubApi(path, options = {}) {
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
-      ...options,
-      headers: {
-        'Authorization': `token ${GH_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
-        ...options.headers
-      }
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `API error ${res.status}`);
-    }
-    return res.json();
-  }
+function getToken() {
+  // 优先用输入框的（刚填的），其次用 localStorage 存的
+  const input = document.getElementById('ghTokenInput').value.trim();
+  if (input) return input;
+  return loca…tem('blog_token') || '';
+}
 
-  // ====== 登录（密码从 GitHub 仓库下的 pw.txt 读取） ======
-  async function login() {
-    const token = document.getElementById('ghTokenInput').value.trim();
-    const pw = document.getElementById('passwordInput').value.trim();
-    const btn = document.getElementById('loginBtn');
-    const errEl = document.getElementById('loginError');
+function saveToken(t) {
+  if (t) loca…tem('blog_token', t);
+}
 
-    if (!token) { errEl.textContent = '请输入 GitHub Token'; return; }
-    if (!pw) { errEl.textContent = '请输入密码'; return; }
-
-    GH_TOKEN = ***
-    btn.disabled = true;
-    btn.textContent = '验证中...';
-    errEl.textContent = '';
-
-    try {
-      // 1. 尝试从 GitHub 仓库读取 pw.txt（密文密码哈希）
-      let file;
-      try {
-        file = await githubApi('pw.txt');
-      } catch (e) {
-        // pw.txt 不存在 —— 首次使用，把输入的密码哈希写入
-        errEl.textContent = '首次使用，正在设置密码...';
-        const pwHash = await sha256(pw);
-        const content = btoa(unescape(encodeURIComponent(pwHash)));
-        await githubApi('pw.txt', {
-          method: 'PUT',
-          body: JSON.stringify({ message: 'Init admin password', content, branch: 'main' })
-        });
-        errEl.textContent = '';
-      }
-
-      // 2. 如果 pw.txt 已存在，比对密码
-      if (file) {
-        const expectedHash = atob(file.content).trim();
-        const inputHash = await sha256(pw);
-        if (inputHash !== expectedHash) {
-          errEl.textContent = '密码错误';
-          btn.disabled = false;
-          btn.textContent = '登 录';
-          return;
-        }
-      }
-
-      // 3. 登录成功 - 存 token 到 sessionStorage（本次会话有效）
-      sessionStorage.setItem('blog_token', GH_TOKEN);
-      sessionStorage.setItem('blog_admin', '1');
-
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminScreen').classList.add('active');
-      await fetchLatestPosts();
-      renderPostList();
-
-    } catch (e) {
-      errEl.textContent = '登录失败: ' + e.message;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '登 录';
-    }
-  }
-
-  function logout() {
-    if (dirty && !confirm('有未发布的更改，确定退出吗？')) return;
-    sessionStorage.clear();
-    location.reload();
-  }
-
-  // ====== 加载文章 ======
-  async function fetchLatestPosts() {
-    try {
-      const file = await githubApi('posts.js');
-      _postsSha = file.sha;
-      const content = atob(file.content);
-      const match = content.match(/var\s+posts\s*=\s*(\[[\s\S]*\])\s*;/);
-      if (match) {
-        _posts = JSON.parse(match[1]);
-        posts.length = 0;
-        _posts.forEach(p => posts.push(p));
-      }
-      dirty = false;
-      updateDirtyUI();
-      document.getElementById('syncStatus').textContent = '✅ 已同步';
-    } catch (e) {
-      console.log('Fetch posts from GitHub failed:', e.message);
-      _posts = [...(posts || [])];
-      document.getElementById('syncStatus').textContent = '📋 初始数据';
-    }
-  }
-
-  // ====== 一键发布 ======
-  async function pushToGithub() {
-    if (!GH_TOKEN) { showToast('Token 丢失，请重新登录', true); return; }
-    const btn = document.getElementById('pushBtn');
-    btn.disabled = true;
-    btn.textContent = '发布中...';
-    try {
-      try { const file = await githubApi('posts.js'); _postsSha = file.sha; } catch (e) { _postsSha = null; }
-      const content = 'var posts = ' + JSON.stringify(_posts, null, 2) + ';';
-      const base64 = btoa(unescape(encodeURIComponent(content)));
-      const body = { message: 'Update posts', content: base64, branch: 'main' };
-      if (_postsSha) body.sha = _postsSha;
-      const result = await githubApi('posts.js', { method: 'PUT', body: JSON.stringify(body) });
-      _postsSha = result.content.sha;
-      dirty = false;
-      updateDirtyUI();
-      document.getElementById('syncStatus').textContent = '✅ 已同步';
-      showToast('🎉 已发布！稍后即可在博客首页看到');
-    } catch (e) {
-      showToast('发布失败: ' + e.message, true);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '发布到网站';
-    }
-  }
-
-  // ====== 文章管理 ======
-  function generateId(title) {
-    const slug = title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '') || 'post';
-    return slug + '-' + Date.now().toString(36);
-  }
-
-  function openEditor(id) {
-    editingId = id || null;
-    document.getElementById('editorOverlay').classList.add('active');
-    if (id) {
-      const p = _posts.find(p => p.id === id);
-      if (p) {
-        document.getElementById('editorTitle').textContent = '编辑文章';
-        document.getElementById('postTitle').value = p.title;
-        document.getElementById('postTags').value = (p.tags || []).join(', ');
-        document.getElementById('postContent').value = p.content;
-        document.getElementById('saveBtn').textContent = '更新';
-      }
-    } else {
-      document.getElementById('editorTitle').textContent = '写新文章';
-      document.getElementById('postTitle').value = '';
-      document.getElementById('postTags').value = '';
-      document.getElementById('postContent').value = '';
-      document.getElementById('saveBtn').textContent = '发布';
-    }
-  }
-
-  function closeEditor() {
-    document.getElementById('editorOverlay').classList.remove('active');
-    editingId = null;
-  }
-
-  function savePost() {
-    const title = document.getElementById('postTitle').value.trim();
-    const tagsRaw = document.getElementById('postTags').value.trim();
-    const content = document.getElementById('postContent').value.trim();
-    if (!title || !content) { showToast('标题和内容不能为空', true); return; }
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
-    if (editingId) {
-      const p = _posts.find(p => p.id === editingId);
-      if (p) { p.title = title; p.tags = tags; p.content = content; p.updatedAt = Date.now(); }
-    } else {
-      _posts.unshift({ id: generateId(title), title, content, tags, createdAt: Date.now(), updatedAt: Date.now() });
-    }
-    posts.length = 0;
-    _posts.forEach(p => posts.push(p));
-    dirty = true;
-    updateDirtyUI();
-    closeEditor();
-    renderPostList();
-    showToast(editingId ? '文章已更新（待发布）' : '文章已保存（待发布）');
-  }
-
-  function deletePost(id) {
-    if (!confirm('确定删除？')) return;
-    _posts = _posts.filter(p => p.id !== id);
-    posts.length = 0;
-    _posts.forEach(p => posts.push(p));
-    dirty = true;
-    updateDirtyUI();
-    renderPostList();
-    showToast('文章已删除（待发布）');
-  }
-
-  function renderPostList() {
-    const el = document.getElementById('postList');
-    if (!_posts || _posts.length === 0) {
-      el.innerHTML = '<div class="empty-state">还没有文章，点击"+ 写文章"开始创作</div>';
-      return;
-    }
-    el.innerHTML = _posts.sort((a, b) => b.createdAt - a.createdAt).map(p => {
-      const d = new Date(p.createdAt);
-      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      return `<div class="post-row">
-        <span class="title">${p.title}</span>
-        <span class="meta">${ds}</span>
-        <div class="actions">
-          <button class="btn btn-outline btn-sm" onclick="openEditor('${p.id}')">编辑</button>
-          <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">删除</button>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  function updateDirtyUI() {
-    document.getElementById('statusBar').style.display = dirty ? 'flex' : 'none';
-  }
-
-  function showToast(msg, isError) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast show' + (isError ? ' error' : '');
-    setTimeout(() => t.className = 'toast', 2500);
-  }
-
-  // ====== 初始化 ======
-  document.getElementById('editorOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeEditor();
+function ghApi(path, opts = {}) {
+  const token = getToken();
+  if (!token) throw new Error('缺少GitHub Token');
+  return fetch(`https://api.github.com/repos/johnwiiick/blog/contents/${path}`, {
+    ...opts,
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', ...opts.headers }
+  }).then(async r => {
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message||`HTTP ${r.status}`); }
+    return r.json();
   });
+}
 
-  // 已登录恢复
-  (async function() {
-    if (sessionStorage.getItem('blog_admin')) {
-      GH_TOKEN = sessionStorage.getItem('blog_token') || ***
-      if (GH_TOKEN) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('adminScreen').classList.add('active');
-        await fetchLatestPosts();
-        renderPostList();
-      } else {
-        sessionStorage.clear();
+async function doLogin() {
+  const pw = document.getElementById('passwordInput').value.trim();
+  const token = getToken();
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+
+  if (!pw) { err.textContent = '请输入密码'; return; }
+  if (!token) { err.textContent = '请勾选「更换 GitHub Token」并填入 Token'; return; }
+
+  btn.disabled = true; btn.textContent = '验证中...'; err.textContent = '';
+
+  try {
+    // 保存 token
+    saveToken(token);
+
+    // 尝试读取 pw.txt
+    let file;
+    try {
+      file = await ghApi('pw.txt');
+    } catch (e) {
+      // 不存在 → 首次设置密码
+      err.textContent = '首次设置密码...';
+      const h = await sha256(pw);
+      const content = btoa(unescape(encodeURIComponent(h)));
+      await ghApi('pw.txt', { method: 'PUT', body: JSON.stringify({ message: 'Set password', content, branch: 'main' }) });
+      err.textContent = '';
+    }
+
+    // 验证密码
+    if (file) {
+      const expected = atob(file.content).trim();
+      if (await sha256(pw) !== expected) {
+        err.textContent = '密码错误'; btn.disabled = false; btn.textContent = '登 录'; return;
       }
     }
-  })();
+
+    sessionStorage.setItem('blog_admin', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').classList.add('active');
+    await loadPosts();
+    renderList();
+  } catch (e) {
+    err.textContent = '登录失败: ' + e.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '登 录';
+  }
+}
+
+function logout() {
+  if (dirty && !confirm('未发布更改，确定退出？')) return;
+  sessionStorage.clear();
+  location.reload();
+}
+
+// ====== 文章数据 ======
+let editingId = null, dirty = false, _posts = [...(posts||[])], _postsSha = null;
+
+async function loadPosts() {
+  try {
+    const f = await ghApi('posts.js'); _postsSha = f.sha;
+    const m = atob(f.content).match(/var\s+posts\s*=\s*(\[[\s\S]*\])\s*;/);
+    if (m) { _posts = JSON.parse(m[1]); posts.length = 0; _posts.forEach(p => posts.push(p)); }
+    dirty = false; toggleDirty();
+    document.getElementById('syncStatus').textContent = '✅ 已同步';
+  } catch (e) {
+    console.log('load:', e.message); _posts = [...(posts||[])];
+    document.getElementById('syncStatus').textContent = '📋 初始数据';
+  }
+}
+
+async function pushToGithub() {
+  const btn = document.getElementById('pushBtn');
+  btn.disabled = true; btn.textContent = '发布中...';
+  try {
+    try { const f = await ghApi('posts.js'); _postsSha = f.sha; } catch(e) { _postsSha = null; }
+    const content = 'var posts = ' + JSON.stringify(_posts, null, 2) + ';';
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const body = { message: 'Update posts', content: b64, branch: 'main' };
+    if (_postsSha) body.sha = _postsSha;
+    const r = await ghApi('posts.js', { method: 'PUT', body: JSON.stringify(body) });
+    _postsSha = r.content.sha; dirty = false; toggleDirty();
+    document.getElementById('syncStatus').textContent = '✅ 已同步';
+    toast('🎉 已发布！稍后刷新首页查看');
+  } catch (e) {
+    toast('发布失败: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = '发布到网站';
+  }
+}
+
+function genId(title) {
+  return (title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g,'-').replace(/^-|-$/g,'')||'post')+'-'+Date.now().toString(36);
+}
+
+function openEditor(id) {
+  editingId = id||null;
+  document.getElementById('editorOverlay').classList.add('active');
+  if (id) {
+    const p = _posts.find(x => x.id===id);
+    if (p) {
+      document.getElementById('editorTitle').textContent='编辑文章';
+      document.getElementById('postTitle').value=p.title;
+      document.getElementById('postTags').value=(p.tags||[]).join(', ');
+      document.getElementById('postContent').value=p.content;
+      document.getElementById('saveBtn').textContent='更新';
+    }
+  } else {
+    document.getElementById('editorTitle').textContent='写新文章';
+    document.getElementById('postTitle').value='';
+    document.getElementById('postTags').value='';
+    document.getElementById('postContent').value='';
+    document.getElementById('saveBtn').textContent='发布';
+  }
+}
+
+function closeEditor() { document.getElementById('editorOverlay').classList.remove('active'); editingId = null; }
+
+function savePost() {
+  const title = document.getElementById('postTitle').value.trim();
+  const tags = document.getElementById('postTags').value.trim().split(',').map(t=>t.trim()).filter(Boolean);
+  const content = document.getElementById('postContent').value.trim();
+  if (!title||!content) { toast('标题和内容不能为空',true); return; }
+  if (editingId) {
+    const p = _posts.find(x=>x.id===editingId);
+    if (p) { p.title=title; p.tags=tags; p.content=content; p.updatedAt=Date.now(); }
+  } else {
+    _posts.unshift({ id:genId(title), title, content, tags, createdAt:Date.now(), updatedAt:Date.now() });
+  }
+  posts.length = 0; _posts.forEach(p => posts.push(p));
+  dirty = true; toggleDirty(); closeEditor(); renderList();
+  toast(editingId?'文章已更新（待发布）':'文章已保存（待发布）');
+}
+
+function deletePost(id) {
+  if (!confirm('确定删除？')) return;
+  _posts = _posts.filter(p=>p.id!==id);
+  posts.length = 0; _posts.forEach(p => posts.push(p));
+  dirty = true; toggleDirty(); renderList();
+  toast('已删除（待发布）');
+}
+
+function renderList() {
+  const el = document.getElementById('postList');
+  if (!_posts.length) { el.innerHTML='<div class="empty-state">还没有文章，点击"+ 写文章"开始创作</div>'; return; }
+  el.innerHTML = _posts.sort((a,b)=>b.createdAt-a.createdAt).map(p => {
+    const d = new Date(p.createdAt);
+    const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return `<div class="post-row"><span class="title">${p.title}</span><span class="meta">${ds}</span><div class="actions"><button class="btn btn-outline btn-sm" onclick="openEditor('${p.id}')">编辑</button><button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">删除</button></div></div>`;
+  }).join('');
+}
+
+function toggleDirty() { document.getElementById('statusBar').style.display = dirty?'flex':'none'; }
+
+function toast(msg, isErr) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show'+(isErr?' error':'');
+  setTimeout(()=>t.className='toast', 2500);
+}
+
+// overlay 点背景关闭
+document.getElementById('editorOverlay').addEventListener('click', function(e) { if (e.target===this) closeEditor(); });
+
+// 自动恢复登录
+(async ()=>{
+  if (sessionStorage.getItem('blog_admin') && getToken()) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').classList.add('active');
+    await loadPosts();
+    renderList();
+  }
+})();
 </script>
 </body>
 </html>
