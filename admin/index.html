@@ -227,7 +227,9 @@ let editingId = null, dirty = false, _posts = [...(posts||[])], _postsSha = null
 async function loadPosts() {
   try {
     const f = await ghApi('posts.js'); _postsSha = f.sha;
-    const m = atob(f.content).match(/var\s+posts\s*=\s*(\[[\s\S]*\])\s*;/);
+    // GitHub API 返回的是 base64 编码的 UTF-8 内容
+    const decoded = decodeURIComponent(escape(atob(f.content)));
+    const m = decoded.match(/var\s+posts\s*=\s*(\[[\s\S]*\])\s*;/);
     if (m) { _posts = JSON.parse(m[1]); posts.length = 0; _posts.forEach(p => posts.push(p)); }
     dirty = false; toggleDirty();
     document.getElementById('syncStatus').textContent = '✅ 已同步';
