@@ -286,8 +286,14 @@
 
   // ============ 页面初始化 ============
   function init() {
-    if (GH_TOKEN && ADMIN_PASSWORD) {
+    const setupDone = localStorage.getItem('blog_setup_done');
+    if (GH_TOKEN && ADMIN_PASSWORD && setupDone) {
       // 已配置
+      document.getElementById('setupScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+    } else if (GH_TOKEN && ADMIN_PASSWORD && !setupDone) {
+      // Token 和密码都有了但 setupDone 标记丢失（可能是清理了部分 localStorage），重新标记
+      localStorage.setItem('blog_setup_done', '1');
       document.getElementById('setupScreen').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
     } else {
@@ -324,6 +330,7 @@
     localStorage.setItem('blog_gh_token', GH_TOKEN);
     localStorage.setItem('blog_gh_repo', GH_REPO);
     localStorage.setItem('blog_admin_pw', ADMIN_PASSWORD);
+    localStorage.setItem('blog_setup_done', '1');
 
     document.getElementById('setupScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
