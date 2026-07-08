@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog · 阅读</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #fff;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: #eee;
+    --accent: #0071e3;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* 顶部导航 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,250,0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  /* 文章列表 */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .post-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .post-card h2 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+  }
+
+  .post-card .meta {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .post-card .excerpt {
+    margin-top: 10px;
+    color: #666;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #666;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* 详情页 */
+  .post-detail {
+    display: none;
+  }
+
+  .post-detail.active {
+    display: block;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  .post-full h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .post-full .meta {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .post-full .body {
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .post-full .body p {
+    margin-bottom: 16px;
+  }
+
+  .post-full .body h2 {
+    font-size: 24px;
+    margin: 32px 0 12px;
+  }
+
+  .post-full .body code {
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .post-full .body pre {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    padding: 20px 24px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+
+  .empty .icon { font-size: 48px; margin-bottom: 16px; }
+
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo" id="homeLink">📝 博客</a>
+    <div class="nav-links">
+      <a href="#" id="homeNav">首页</a>
+      <a href="admin/" id="adminNav">管理</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 列表视图 -->
+  <div id="listView"></div>
+
+  <!-- 详情视图 -->
+  <div class="post-detail" id="detailView">
+    <button class="back-btn" id="backBtn">← 返回</button>
+    <article class="post-full">
+      <h1 id="detailTitle"></h1>
+      <div class="meta" id="detailMeta"></div>
+      <div class="body" id="detailBody"></div>
+    </article>
+  </div>
+</main>
+
+<footer>
+  Powered by GitHub Pages
+</footer>
+
+<script src="posts.js"></script>
+<script>
+  const listView = document.getElementById('listView');
+  const detailView = document.getElementById('detailView');
+
+  function formatDate(ts) {
+    const d = new Date(ts);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function stripHtml(html) {
+    return html.replace(/<[^>]*>/g, '').substring(0, 150);
+  }
+
+  function renderList() {
+    detailView.classList.remove('active');
+    listView.style.display = 'block';
+
+    if (!posts || posts.length === 0) {
+      listView.innerHTML = '<div class="empty"><div class="icon">📭</div><p>还没有文章</p></div>';
+      return;
+    }
+
+    listView.innerHTML = posts
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map((p, i) => `
+        <div class="post-card" onclick="showPost('${p.id}')">
+          <h2>${p.title}</h2>
+          <div class="meta">
+            <span>${formatDate(p.createdAt)}</span>
+            ${p.tags ? p.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
+          </div>
+          <div class="excerpt">${stripHtml(p.content)}...</div>
+        </div>
+      `).join('');
+  }
+
+  function showPost(id) {
+    const p = posts.find(p => p.id === id);
+    if (!p) return;
+
+    listView.style.display = 'none';
+    detailView.classList.add('active');
+
+    document.getElementById('detailTitle').textContent = p.title;
+    document.getElementById('detailMeta').innerHTML = `
+      <span>${formatDate(p.createdAt)}</span>
+      ${p.tags ? p.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
+    `;
+    document.getElementById('detailBody').innerHTML = p.content;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.pushState({ view: 'post', id }, '', `#post-${id}`);
+  }
+
+  function goHome() {
+    renderList();
+    history.pushState({ view: 'list' }, '', '#');
+  }
+
+  document.getElementById('backBtn').addEventListener('click', goHome);
+  document.getElementById('homeLink').addEventListener('click', e => { e.preventDefault(); goHome(); });
+  document.getElementById('homeNav').addEventListener('click', e => { e.preventDefault(); goHome(); });
+
+  // 路由：支持直接打开某个文章
+  function handleRoute() {
+    const hash = window.location.hash;
+    if (hash.startsWith('#post-')) {
+      const id = hash.replace('#post-', '');
+      if (posts.find(p => p.id === id)) {
+        showPost(id);
+      } else {
+        goHome();
+      }
+    } else {
+      goHome();
+    }
+  }
+
+  window.addEventListener('hashchange', handleRoute);
+  handleRoute();
+</script>
+</body>
+</html>

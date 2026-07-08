@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博客管理</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #fff;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: #eee;
+    --accent: #0071e3;
+    --danger: #ff3b30;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* 登录页 */
+  .login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .login-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 48px 40px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .login-card h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .login-card p {
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-size: 14px;
+  }
+
+  .login-card input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .login-card input:focus {
+    border-color: var(--accent);
+  }
+
+  .login-card button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+
+  .login-card button:hover { opacity: 0.9; }
+
+  .login-card .error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 8px;
+    min-height: 20px;
+  }
+
+  /* 管理主界面 */
+  .admin-screen {
+    display: none;
+  }
+
+  .admin-screen.active {
+    display: block;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,250,0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  .btn-outline {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-outline:hover { background: #f5f5f5; }
+
+  .btn-danger {
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+  }
+
+  .btn-danger:hover { background: #fff0ef; }
+
+  .btn-sm {
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .post-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+    gap: 16px;
+  }
+
+  .post-row .title {
+    font-weight: 600;
+    font-size: 15px;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-row .meta {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .post-row .actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* 编辑器弹窗 */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .overlay.active {
+    display: flex;
+  }
+
+  .editor {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .editor h2 {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  .editor label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .editor input, .editor textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .editor input:focus, .editor textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .editor textarea {
+    min-height: 200px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .editor .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: -16px;
+    margin-bottom: 20px;
+  }
+
+  .editor .btns {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .success-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .success-toast.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- 登录界面 -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <h1>🔐 博客管理</h1>
+    <p>请输入管理密码</p>
+    <input type="password" id="passwordInput" placeholder="管理密码" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">登 录</button>
+    <p class="error" id="loginError"></p>
+  </div>
+</div>
+
+<!-- 管理界面 -->
+<div class="admin-screen" id="adminScreen">
+  <header>
+    <div class="header-inner">
+      <span class="logo">📝 博客管理</span>
+      <div class="header-actions">
+        <a href="../" class="btn btn-outline">查看博客</a>
+        <button class="btn btn-primary" onclick="openEditor()">+ 写文章</button>
+        <button class="btn btn-outline" onclick="exportData()">导出</button>
+        <button class="btn btn-outline" id="logoutBtn" onclick="logout()">退出</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title">文章列表</div>
+    <div id="postList"></div>
+  </main>
+</div>
+
+<!-- 编辑器弹窗 -->
+<div class="overlay" id="editorOverlay">
+  <div class="editor">
+    <h2 id="editorTitle">写新文章</h2>
+    <label>标题</label>
+    <input type="text" id="postTitle" placeholder="文章标题">
+    <label>标签（用逗号分隔）</label>
+    <input type="text" id="postTags" placeholder="技术, 生活, 随笔">
+    <label>内容（支持 HTML）</label>
+    <div class="hint">可直接写文字，每段用 &lt;p&gt;段落&lt;/p&gt; 包裹。支持 &lt;h2&gt;标题&lt;/h2&gt;、&lt;code&gt;代码&lt;/code&gt; 等。</div>
+    <textarea id="postContent" placeholder="开始写作..."></textarea>
+    <div class="btns">
+      <button class="btn btn-outline" onclick="closeEditor()">取消</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="savePost()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-toast" id="toast"></div>
+
+<script src="../posts.js"></script>
+<script>
+  // 管理密码（部署后请修改此处或通过 URL hash 设置）
+  const ADMIN_PASSWORD = 'admin123';
+
+  let editingId = null;
+
+  // 登录
+  function login() {
+    const pw = document.getElementById('passwordInput').value;
+    if (pw === ADMIN_PASSWORD) {
+      sessionStorage.setItem('blog_admin', '1');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminScreen').classList.add('active');
+      renderPostList();
+    } else {
+      document.getElementById('loginError').textContent = '密码错误';
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('blog_admin');
+    location.reload();
+  }
+
+  // 生成 ID
+  function generateId(title) {
+    const slug = title.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '') || 'post';
+    return slug + '-' + Date.now().toString(36);
+  }
+
+  // 打开编辑器
+  function openEditor(id) {
+    editingId = id || null;
+    const overlay = document.getElementById('editorOverlay');
+    overlay.classList.add('active');
+
+    if (id) {
+      const p = posts.find(p => p.id === id);
+      if (p) {
+        document.getElementById('editorTitle').textContent = '编辑文章';
+        document.getElementById('postTitle').value = p.title;
+        document.getElementById('postTags').value = (p.tags || []).join(', ');
+        document.getElementById('postContent').value = p.content;
+        document.getElementById('saveBtn').textContent = '更新';
+      }
+    } else {
+      document.getElementById('editorTitle').textContent = '写新文章';
+      document.getElementById('postTitle').value = '';
+      document.getElementById('postTags').value = '';
+      document.getElementById('postContent').value = '';
+      document.getElementById('saveBtn').textContent = '发布';
+    }
+  }
+
+  function closeEditor() {
+    document.getElementById('editorOverlay').classList.remove('active');
+    editingId = null;
+  }
+
+  function savePost() {
+    const title = document.getElementById('postTitle').value.trim();
+    const tagsRaw = document.getElementById('postTags').value.trim();
+    const content = document.getElementById('postContent').value.trim();
+
+    if (!title || !content) {
+      showToast('标题和内容不能为空');
+      return;
+    }
+
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+    if (editingId) {
+      const p = posts.find(p => p.id === editingId);
+      if (p) {
+        p.title = title;
+        p.tags = tags;
+        p.content = content;
+        p.updatedAt = Date.now();
+      }
+    } else {
+      posts.unshift({
+        id: generateId(title),
+        title,
+        content,
+        tags,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+    }
+
+    closeEditor();
+    renderPostList();
+    showToast(editingId ? '文章已更新' : '文章已发布');
+  }
+
+  function deletePost(id) {
+    if (!confirm('确定要删除这篇文章吗？此操作不可撤销。')) return;
+    posts = posts.filter(p => p.id !== id);
+    renderPostList();
+    showToast('文章已删除');
+  }
+
+  function renderPostList() {
+    const el = document.getElementById('postList');
+    if (!posts || posts.length === 0) {
+      el.innerHTML = '<div class="empty-state">还没有文章，点击上方"+ 写文章"开始创作</div>';
+      return;
+    }
+
+    el.innerHTML = posts
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map(p => {
+        const d = new Date(p.createdAt);
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        return `
+          <div class="post-row">
+            <span class="title">${p.title}</span>
+            <span class="meta">${dateStr}</span>
+            <div class="actions">
+              <button class="btn btn-outline btn-sm" onclick="openEditor('${p.id}')">编辑</button>
+              <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">删除</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+  }
+
+  function exportData() {
+    const blob = new Blob(['var posts = ' + JSON.stringify(posts, null, 2) + ';'], { type: 'text/javascript' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'posts.js';
+    a.click();
+    showToast('数据已导出，请替换仓库中的 posts.js 并推送到 GitHub');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // 初始化
+  if (sessionStorage.getItem('blog_admin')) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').classList.add('active');
+    renderPostList();
+  }
+
+  // 点击弹窗背景关闭
+  document.getElementById('editorOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeEditor();
+  });
+</script>
+</body>
+</html>
